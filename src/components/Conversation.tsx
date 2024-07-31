@@ -1,5 +1,6 @@
 import io from "socket.io-client";
 import { FormEvent, useEffect, useState } from "react";
+import "./styles/Conversation.css";
 
 const socket = io(import.meta.env.VITE_SOCKET_URL);
 
@@ -26,7 +27,9 @@ export default function Conversation() {
   };
 
   useEffect(() => {
-    socket.on(SocketEvent.MESSAGE, receiveMessage);
+    socket.on(SocketEvent.MESSAGE, (data: IoData) => {
+      receiveMessage(data);
+    });
 
     return () => {
       socket.off(SocketEvent.MESSAGE);
@@ -34,23 +37,25 @@ export default function Conversation() {
   }, []);
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className="container">
+      <div className="message-box-container">
+        {messages.map((message, i) => (
+          <div key={i} className="message-box">
+            <span>{message.id} :</span>
+            <span>{message.data}</span>
+          </div>
+        ))}
+      </div>
+      <form onSubmit={handleSubmit} className="form">
         <input
           type="text"
           placeholder="Write your message"
           onChange={(e) => setCurrentValue(e.target.value)}
           value={currentValue}
+          className="input"
         />
-        <button>Send</button>
+        <button className="button">Send</button>
       </form>
-      <div>
-        {messages.map((message, i) => (
-          <li key={i}>
-            {message.id}: {message.data}
-          </li>
-        ))}
-      </div>
     </div>
   );
 }

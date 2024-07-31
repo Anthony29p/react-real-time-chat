@@ -2,7 +2,7 @@ import Conversation from "./components/Conversation";
 
 export default function App() {
   return (
-    <div>
+    <div className="container">
       <Conversation></Conversation>
     </div>
   );
