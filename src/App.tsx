@@ -1,9 +1,9 @@
-import Conversation from "./components/Conversation";
+import Login from "./pages/Login";
 
 export default function App() {
   return (
     <div className="container">
-      <Conversation></Conversation>
+      <Login></Login>
     </div>
   );
 }

@@ -1,6 +1,6 @@
-import io from "socket.io-client";
 import { FormEvent, useEffect, useState } from "react";
-import "./styles/Conversation.css";
+import io from "socket.io-client";
+import "../styles/Conversation.scss";
 
 const socket = io(import.meta.env.VITE_SOCKET_URL);
 
@@ -10,10 +10,15 @@ interface IoData {
 }
 
 enum SocketEvent {
+  CONNECT = "connect",
+  DISCONNECT = "disconnect",
   MESSAGE = "message",
 }
 
+const yourself = "You";
+
 export default function Conversation() {
+  let sessionId: string;
   const [currentValue, setCurrentValue] = useState<string>("");
   const [messages, setMessages] = useState<IoData[]>([]);
 
@@ -27,7 +32,18 @@ export default function Conversation() {
   };
 
   useEffect(() => {
+    socket.on(SocketEvent.CONNECT, () => {
+      console.log("socket.id", socket.id);
+      sessionId = socket.id!;
+    });
+  }, []);
+
+  useEffect(() => {
     socket.on(SocketEvent.MESSAGE, (data: IoData) => {
+      if (data.id === sessionId) {
+        data.id = yourself;
+      }
+
       receiveMessage(data);
     });
 
@@ -40,7 +56,12 @@ export default function Conversation() {
     <div className="container">
       <div className="message-box-container">
         {messages.map((message, i) => (
-          <div key={i} className="message-box">
+          <div
+            key={i}
+            className={`${
+              message.id === yourself ? "message-box" : "message-box-response"
+            }`}
+          >
             <span>{message.id} :</span>
             <span>{message.data}</span>
           </div>
