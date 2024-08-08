@@ -1,14 +1,25 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./pages/Login";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Conversation from "./components/Conversation";
+import ErrorComponent from "./components/Error";
+import Login from "./pages/Login";
+
+const router = createBrowserRouter([
+  {
+    path: "/messenger",
+    element: <Conversation />,
+    errorElement: <ErrorComponent />,
+  },
+  {
+    path: "/",
+    element: <Login />,
+    errorElement: <ErrorComponent />,
+  },
+]);
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/messenger" element={<Conversation />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="container">
+      <RouterProvider router={router} />
+    </div>
   );
 }
